@@ -6,7 +6,6 @@
     <title>meeyota | Abyss</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #fff; }
         body {
             margin: 0; padding: 0;
             background: url('background.gif') no-repeat center center fixed;
@@ -15,159 +14,157 @@
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; overflow: hidden;
         }
+        body::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 1; }
 
-        body::before {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5); z-index: 1;
+        /* Эффект сканера */
+        .container::after {
+            content: ""; position: absolute; top: -100%; left: 0; width: 100%; height: 20px;
+            background: rgba(255, 255, 255, 0.03); animation: scan 4s linear infinite; pointer-events: none;
         }
-
-        /* Анимация появления контейнера */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
 
         .container {
-            position: relative; z-index: 2; width: 85%; max-width: 360px;
-            background: rgba(0, 0, 0, 0.75); padding: 30px; border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px);
-            text-align: center; margin-bottom: 40px;
-            animation: slideIn 1s ease-out; /* Запуск анимации */
+            position: relative; z-index: 2; width: 90%; max-width: 360px;
+            background: rgba(0, 0, 0, 0.85); padding: 30px; border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
+            text-align: center; overflow: hidden;
         }
 
-        .glitch {
-            font-size: 26px; font-weight: bold; text-transform: uppercase;
-            position: relative; letter-spacing: 5px; margin: 0; color: #fff;
-        }
-        
-        .header { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 30px; }
-        .profile-vid { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
+        .profile-vid { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; margin-bottom: 10px; }
+        .glitch { font-size: 26px; font-weight: bold; text-transform: uppercase; letter-spacing: 5px; text-shadow: 2px 0 #ff003c, -2px 0 #00fffc; }
 
-        .links { display: flex; flex-direction: column; gap: 15px; }
-        
+        .links { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
         .btn {
-            text-decoration: none; color: white; background: rgba(255, 255, 255, 0.07);
-            padding: 16px; border-radius: 12px; font-weight: bold;
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            text-decoration: none; color: white; background: rgba(255, 255, 255, 0.05);
+            padding: 12px; border-radius: 12px; font-weight: bold; border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px;
+            cursor: pointer;
         }
+        .btn:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.4); }
+        .tg:hover { background: #0088cc !important; box-shadow: 0 0 20px rgba(0, 136, 204, 0.4); }
+        .ds:hover { background: #5865F2 !important; box-shadow: 0 0 20px rgba(88, 101, 242, 0.4); }
+        .don:hover { background: #ffdd2d !important; color: #000 !important; box-shadow: 0 0 20px rgba(255, 221, 45, 0.4); }
 
-        /* Общий эффект при наведении/нажатии */
-        .btn:hover, .btn:active {
-            transform: scale(1.05);
-            color: #fff;
-        }
+        .system-info { background: rgba(255,255,255,0.03); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        .stat-label { font-size: 10px; color: #666; display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .bar-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; }
+        .bar-fill { height: 100%; background: #4caf50; border-radius: 2px; width: 0%; transition: width 1s; }
 
-        /* Цвета для каждой кнопки */
-        .tg:hover, .tg:active { 
-            background: #0088cc !important; 
-            border-color: #0088cc; 
-            box-shadow: 0 0 20px rgba(0, 136, 204, 0.5); 
-        }
-        .ds:hover, .ds:active { 
-            background: #5865F2 !important; 
-            border-color: #5865F2; 
-            box-shadow: 0 0 20px rgba(88, 101, 242, 0.5); 
-        }
-        .don:hover, .don:active { 
-            background: #ffdd2d !important; 
-            border-color: #ffdd2d; 
-            color: #000; /* Черный текст на желтом фоне для читаемости */
-            box-shadow: 0 0 20px rgba(255, 221, 45, 0.5); 
-        }
+        #visualizer { display: flex; justify-content: center; align-items: flex-end; gap: 3px; height: 35px; margin-top: 15px; }
+        .v-bar { width: 4px; background: #ff003c; border-radius: 2px; height: 3px; transition: height 0.08s ease; }
 
-        /* Нижний плеер */
-        .music-player {
-            position: fixed; bottom: -120px; left: 0; width: 100%;
-            background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px; box-sizing: border-box;
-            transition: bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1); z-index: 100;
-        }
-        .music-player.active { bottom: 0; }
-        
-        .player-info { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px; letter-spacing: 1px; }
-        .progress-container { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; }
-        .progress-bar { height: 100%; background: #fff; width: 0%; border-radius: 10px; }
-
-        .play-trigger {
-            position: absolute; top: 25px; right: 25px; z-index: 10;
-            width: 45px; height: 45px; background: rgba(255,255,255,0.1);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            border: 1px solid rgba(255,255,255,0.3); color: white; cursor: pointer;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
-            transition: 0.3s;
-        }
-        .play-trigger:hover { transform: scale(1.1); background: rgba(255,255,255,0.2); }
+        .player-bar { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; display: flex; align-items: center; justify-content: space-between; }
+        .p-btn { cursor: pointer; font-size: 20px; color: #ff003c; transition: 0.2s; }
+        .track-info { font-size: 9px; color: #444; text-transform: uppercase; letter-spacing: 1px; }
+        #ping-val { font-size: 9px; color: #4caf50; font-family: monospace; }
     </style>
 </head>
 <body>
 
-<div class="play-trigger" onclick="toggleMusic()">
-    <i id="main-icon" class="fas fa-play"></i>
-</div>
-
-<audio id="audio" src="music.mp3" loop preload="auto"></audio>
-
 <div class="container">
-    <div class="header">
-        <video class="profile-vid" autoplay loop muted playsinline>
-            <source src="ebal.mp4" type="video/mp4">
-        </video>
-        <h1 class="glitch">meeyota</h1>
-    </div>
+    <video class="profile-vid" autoplay loop muted playsinline><source src="ebal.mp4" type="video/mp4"></video>
+    <h1 class="glitch">meeyota</h1>
 
     <div class="links">
-        <a href="https://t.me/meeyota" class="btn tg">
-            <i class="fab fa-telegram"></i> TELEGRAM
-        </a>
-        <a href="https://discord.com/users/meeyota" class="btn ds">
-            <i class="fab fa-discord"></i> DISCORD
-        </a>
-        <a href="https://www.tbank.ru/cf/9djyHBOrrZH" class="btn don">
-            <i class="fas fa-wallet"></i> DONATE
-        </a>
+        <a href="https://t.me/meeyota" target="_blank" class="btn tg" onclick="playClick()"><i class="fab fa-telegram"></i> TELEGRAM</a>
+        <a href="https://discord.com/users/meeyota" target="_blank" class="btn ds" onclick="playClick()"><i class="fab fa-discord"></i> DISCORD</a>
+        <div class="btn don" onclick="handleDonate()"><i class="fas fa-wallet"></i> DONATE</div>
+    </div>
+
+    <div class="system-info">
+        <div class="stat-label"><span>DEVICE BATTERY</span><span id="bat-val">--%</span></div>
+        <div class="bar-bg"><div id="bat-fill" class="bar-fill"></div></div>
+    </div>
+
+    <div id="visualizer"></div>
+
+    <div class="player-bar">
+        <i class="fas fa-play p-btn" id="playBtn"></i>
+        <div class="track-info">Ice Cube - Good Day</div>
+        <div id="ping-val">PING: 24ms</div>
     </div>
 </div>
 
-<div id="player-bar" class="music-player">
-    <div class="player-info">
-        <span><i class="fas fa-compact-disc fa-spin"></i> Ice Cube - It Was A Good Day</span>
-        <span id="time">00:00</span>
-    </div>
-    <div class="progress-container">
-        <div id="progress" class="progress-bar"></div>
-    </div>
-</div>
+<audio id="audio" src="music.mp3" crossorigin="anonymous" loop></audio>
+<audio id="clickSound" src="click.mp3" preload="auto"></audio>
 
 <script>
     const audio = document.getElementById('audio');
-    const playerBar = document.getElementById('player-bar');
-    const progressBar = document.getElementById('progress');
-    const timeDisplay = document.getElementById('time');
-    const mainIcon = document.getElementById('main-icon');
+    const clickSound = document.getElementById('clickSound');
+    const playBtn = document.getElementById('playBtn');
+    const visualizer = document.getElementById('visualizer');
 
-    function toggleMusic() {
-        if (audio.paused) {
-            audio.play();
-            playerBar.classList.add('active');
-            mainIcon.className = "fas fa-pause";
-        } else {
-            audio.pause();
-            mainIcon.className = "fas fa-play";
+    // Звук клика
+    function playClick() {
+        clickSound.currentTime = 0;
+        clickSound.volume = 0.5; // Громкость 50%
+        clickSound.play();
+    }
+
+    // Логика доната
+    function handleDonate() {
+        playClick();
+        const cardNumber = '2200701791728030';
+        navigator.clipboard.writeText(cardNumber).then(() => {
+            alert('Номер карты скопирован: ' + cardNumber);
+            window.open("https://www.tbank.ru/rm/meeyota.abyss/transfer/", "_blank");
+        });
+    }
+
+    // Эквалайзер
+    for(let i=0; i<18; i++) {
+        let bar = document.createElement('div');
+        bar.className = 'v-bar';
+        visualizer.appendChild(bar);
+    }
+    const bars = document.querySelectorAll('.v-bar');
+    let audioCtx, analyser, dataArray;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            const source = audioCtx.createMediaElementSource(audio);
+            source.connect(analyser); analyser.connect(audioCtx.destination);
+            analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount);
+            renderFrame();
         }
     }
 
-    audio.addEventListener('timeupdate', () => {
-        if (audio.duration) {
-            const pct = (audio.currentTime / audio.duration) * 100;
-            progressBar.style.width = pct + "%";
-            let mins = Math.floor(audio.currentTime / 60);
-            let secs = Math.floor(audio.currentTime % 60);
-            timeDisplay.innerText = `${mins < 10 ? '0'+mins : mins}:${secs < 10 ? '0'+secs : secs}`;
-        }
-    });
+    function renderFrame() {
+        requestAnimationFrame(renderFrame);
+        analyser.getByteFrequencyData(dataArray);
+        bars.forEach((bar, i) => {
+            let h = (dataArray[i] / 255) * 35;
+            bar.style.height = (h > 3 ? h : 3) + "px";
+        });
+    }
+
+    playBtn.onclick = () => {
+        playClick(); // Звук на кнопку плеера
+        initAudio();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if(audio.paused) { audio.play(); playBtn.className = "fas fa-pause p-btn"; }
+        else { audio.pause(); playBtn.className = "fas fa-play p-btn"; }
+    };
+
+    // Батарея
+    if ('getBattery' in navigator) {
+        navigator.getBattery().then(bat => {
+            const update = () => {
+                let l = Math.round(bat.level * 100);
+                document.getElementById('bat-val').innerText = l + "%";
+                document.getElementById('bat-fill').style.width = l + "%";
+            };
+            update(); bat.onlevelchange = update;
+        });
+    }
+
+    // Пинг
+    setInterval(() => {
+        let p = Math.floor(Math.random() * (35 - 18) + 18);
+        document.getElementById('ping-val').innerText = `PING: ${p}ms`;
+    }, 2000);
 </script>
 
 </body>
