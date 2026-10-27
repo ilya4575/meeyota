@@ -56,7 +56,11 @@
         .player-bar { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; display: flex; align-items: center; justify-content: space-between; }
         .p-btn { cursor: pointer; font-size: 20px; color: #ff003c; transition: 0.2s; }
         .track-info { font-size: 9px; color: #444; text-transform: uppercase; letter-spacing: 1px; }
-        #ping-val { font-size: 9px; color: #4caf50; font-family: monospace; }
+        #ping-val { font-size: 9px; color: #4caf50; font-family: monospace; transition: color 0.4s; cursor: help; }
+        #ping-val.good { color: #4caf50; }
+        #ping-val.mid  { color: #ffdd2d; }
+        #ping-val.bad  { color: #ff003c; }
+        #ping-val.na   { color: #666; }
     </style>
 </head>
 <body>
@@ -81,7 +85,7 @@
     <div class="player-bar">
         <i class="fas fa-play p-btn" id="playBtn"></i>
         <div class="track-info">Ice Cube - Good Day</div>
-        <div id="ping-val">PING: 24ms</div>
+        <div id="ping-val" class="na">PING: ...</div>
     </div>
 </div>
 
@@ -160,11 +164,94 @@
         });
     }
 
-    // Пинг
-    setInterval(() => {
-        let p = Math.floor(Math.random() * (35 - 18) + 18);
-        document.getElementById('ping-val').innerText = `PING: ${p}ms`;
-    }, 2000);
+    /* ============================================================
+       PING — РЕАЛЬНЫЙ замер сетевой задержки (RTT)
+       Браузер не умеет ICMP-ping, поэтому меряем честный round-trip:
+       запрос к крошечному файлу ping.txt на этом же домене,
+       время = performance.now() до/после полного ответа.
+       Берём МИНИМУМ из нескольких проб — это чистая сетевая
+       задержка, без очередей, джиттера и обработки на сервере.
+       ============================================================ */
+    const pingEl = document.getElementById('ping-val');
+    const PING_URL   = 'ping.txt';   // 1 байт, лежит рядом с index.html
+    const PING_PROBES = 4;           // проб за один замер
+    const PING_EVERY  = 5000;        // обновление, мс
+    const PING_TIMEOUT = 4000;       // отвал пробы, мс
+
+    function showPing(ms) {
+        if (ms === null) {
+            pingEl.innerText = 'PING: n/a';
+            pingEl.className = 'na';
+            return;
+        }
+        pingEl.innerText = 'PING: ' + Math.round(ms) + 'ms';
+        pingEl.className = ms < 80 ? 'good' : (ms < 200 ? 'mid' : 'bad');
+    }
+
+    async function probe(url, method) {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), PING_TIMEOUT);
+        const t0 = performance.now();
+        try {
+            const res = await fetch(url, {
+                method: method || 'GET',
+                cache: 'no-store',
+                signal: ctrl.signal,
+                credentials: 'omit'
+            });
+            await res.arrayBuffer();          // ждём тело, чтобы замер был полным
+            const dt = performance.now() - t0;
+            if (!res.ok) return null;
+            if (dt <= 0 || dt > PING_TIMEOUT) return null;
+            return dt;
+        } catch (e) {
+            return null;
+        } finally {
+            clearTimeout(timer);
+        }
+    }
+
+    // один замер = несколько параллельных проб, берём лучшую
+    async function measurePing() {
+        const bust = () => '?cb=' + Date.now() + Math.random().toString(36).slice(2);
+        let results = await Promise.all(
+            Array.from({ length: PING_PROBES }, () => probe(PING_URL + bust()))
+        );
+
+        // если ping.txt ещё не залит — пробуем HEAD своего же index.html
+        if (!results.some(r => r !== null)) {
+            results = await Promise.all(
+                Array.from({ length: PING_PROBES }, () => probe(location.pathname + bust(), 'HEAD'))
+            );
+        }
+
+        const ok = results.filter(r => r !== null);
+        if (ok.length) return Math.min.apply(null, ok);
+
+        // последний шанс: оценка RTT от самого браузера (Chrome/Android)
+        const netRtt = navigator.connection && navigator.connection.rtt;
+        if (typeof netRtt === 'number' && netRtt > 0) return netRtt;
+        return null;
+    }
+
+    let pingBusy = false;
+    async function updatePing() {
+        if (pingBusy) return;
+        pingBusy = true;
+        try {
+            showPing(await measurePing());
+        } finally {
+            pingBusy = false;
+        }
+    }
+
+    updatePing();
+    setInterval(updatePing, PING_EVERY);
+
+    // при возврате на вкладку — сразу свежий замер
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) updatePing();
+    });
 </script>
 
 </body>
