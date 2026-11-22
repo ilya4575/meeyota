@@ -3,256 +3,1137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#11151b">
+    <meta name="description" content="meeyota — personal page">
     <title>meeyota | Abyss</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            color-scheme: dark;
+            --blue: #709be0;
+            --blue-bright: #8eb6f6;
+            --blue-dim: rgba(112, 155, 224, 0.42);
+            --white: #f1f3f7;
+            --muted: #b1bac9;
+            --deep: #10151d;
+        }
+
+        * { box-sizing: border-box; letter-spacing: 0; }
+
+        html { min-width: 320px; min-height: 100%; background: var(--deep); }
+
         body {
-            margin: 0; padding: 0;
-            background: url('background.gif') no-repeat center center fixed;
-            background-size: cover; background-color: #000;
-            color: white; font-family: 'Segoe UI', sans-serif;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; overflow: hidden;
-        }
-        body::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 1; }
-
-        /* Эффект сканера */
-        .container::after {
-            content: ""; position: absolute; top: -100%; left: 0; width: 100%; height: 20px;
-            background: rgba(255, 255, 255, 0.03); animation: scan 4s linear infinite; pointer-events: none;
-        }
-        @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
-
-        .container {
-            position: relative; z-index: 2; width: 90%; max-width: 360px;
-            background: rgba(0, 0, 0, 0.85); padding: 30px; border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
-            text-align: center; overflow: hidden;
+            position: relative;
+            display: flex;
+            min-height: 100vh;
+            min-height: 100svh;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 42px 20px 24px;
+            color: var(--white);
+            background: #11151b;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
         }
 
-        .profile-vid { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; margin-bottom: 10px; }
-        .glitch { font-size: 26px; font-weight: bold; text-transform: uppercase; letter-spacing: 5px; text-shadow: 2px 0 #ff003c, -2px 0 #00fffc; }
+        body::before,
+        body::after {
+            position: fixed;
+            z-index: 0;
+            inset: -10px;
+            content: "";
+            pointer-events: none;
+        }
 
-        .links { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
-        .btn {
-            text-decoration: none; color: white; background: rgba(255, 255, 255, 0.05);
-            padding: 12px; border-radius: 12px; font-weight: bold; border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px;
+        body::before {
+            background: url("assets/winter/forest.jpg") center 64% / cover no-repeat;
+            filter: grayscale(0.85) brightness(0.53) blur(2px);
+            transform: scale(1.025);
+            animation: forest-drift 35s ease-in-out infinite alternate, forest-in 1100ms cubic-bezier(0.25, 0.7, 0.3, 1) 60ms both;
+        }
+
+        body::after {
+            background: linear-gradient(180deg, rgba(13, 16, 23, 0.18), rgba(10, 14, 20, 0.42) 58%, rgba(8, 12, 18, 0.58));
+            animation: forest-in 1300ms ease 140ms both;
+        }
+
+        a { color: inherit; }
+        button { font: inherit; }
+
+        #snow {
+            position: fixed;
+            opacity: 0;
+            animation: forest-in 1200ms ease 420ms both;
+            z-index: 3;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .ping-pill {
+            position: fixed;
+            z-index: 4;
+            top: 10px;
+            right: 12px;
+            display: flex;
+            min-height: 34px;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 11px;
+            border: 1px solid rgba(10, 14, 20, 0.76);
+            border-radius: 22px;
+            color: var(--blue);
+            background: rgba(11, 15, 21, 0.78);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+            font: 13px/1 Consolas, "Courier New", monospace;
+            backdrop-filter: blur(8px);
+        }
+
+        .ping-pill i { font-size: 12px; }
+        .ping-pill span { min-width: 25px; }
+
+        .profile {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            width: min(100%, 540px);
+            flex-direction: column;
+            align-items: center;
+            margin: auto 0;
+            text-align: center;
+            animation: profile-arrive 850ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+        }
+
+        .avatar-frame {
+            position: relative;
+            width: 166px;
+            height: 166px;
+            flex: 0 0 166px;
+            margin-bottom: 19px;
+            border: 1px solid rgba(215, 228, 249, 0.58);
+            border-radius: 50%;
+            background: rgba(10, 14, 20, 0.65);
+            box-shadow: 0 0 0 7px rgba(222, 231, 246, 0.075), 0 0 42px rgba(183, 205, 238, 0.32);
+            overflow: hidden;
+        }
+
+        .avatar-frame video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            object-fit: cover;
+            filter: grayscale(0.35) brightness(0.91);
+        }
+
+        .profile-name {
+            max-width: 100%;
+            margin: 0;
+            color: var(--blue);
+            font-size: 38px;
+            font-weight: 700;
+            line-height: 1.12;
+            overflow-wrap: anywhere;
+            text-shadow: 0 2px 16px rgba(7, 12, 20, 0.68);
+        }
+
+        .profile-name .code-mark {
+            display: inline-flex;
+            width: 26px;
+            height: 26px;
+            align-items: center;
+            justify-content: center;
+            margin-left: 4px;
+            color: var(--blue-bright);
+            vertical-align: 3px;
+        }
+
+        .profile-name .code-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.2; }
+
+        .username {
+            margin: 6px 0 0;
+            color: var(--blue);
+            font-size: 22px;
+            line-height: 1.25;
+            text-shadow: 0 2px 12px rgba(7, 12, 20, 0.8);
+        }
+
+        .skill-icons {
+            display: flex;
+            min-height: 37px;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            margin-top: 14px;
+            color: var(--blue);
+        }
+
+        .skill-icons span {
+            display: inline-flex;
+            min-width: 24px;
+            min-height: 26px;
+            align-items: center;
+            justify-content: center;
+            color: inherit;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1;
+            text-shadow: 0 1px 12px rgba(4, 10, 19, 0.62);
+        }
+
+        .skill-icons .fa-java,
+        .skill-icons .fa-circle-check,
+        .skill-icons .fa-bug,
+        .skill-icons .fa-code { color: var(--blue); }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .tag {
+            display: inline-flex;
+            min-height: 45px;
+            align-items: center;
+            justify-content: center;
+            padding: 0 19px;
+            border: 1px solid var(--blue-dim);
+            border-radius: 24px;
+            color: var(--blue);
+            background: rgba(12, 17, 25, 0.12);
+            font-size: 19px;
+            line-height: 1;
+            white-space: nowrap;
+            text-shadow: 0 1px 9px rgba(5, 10, 18, 0.7);
+            backdrop-filter: blur(4px);
+        }
+
+        .tag-coder::after { content: "✿"; margin-left: 5px; color: #f38ea9; }
+        .tag-owner { padding-right: 22px; padding-left: 22px; }
+        .tag-god { padding-right: 16px; padding-left: 16px; }
+
+        .divider {
+            width: min(100%, 468px);
+            height: 1px;
+            margin: 24px 0 21px;
+            border: 0;
+            background: linear-gradient(90deg, transparent, rgba(112, 155, 224, 0.65), transparent);
+        }
+
+        .bio-list {
+            display: grid;
+            width: min(100%, 458px);
+            gap: 5px;
+            padding: 0 4px;
+            text-align: left;
+        }
+
+        .bio-line {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            color: var(--white);
+            font-size: 21px;
+            line-height: 1.45;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.92), 0 1px 2px #000;
+        }
+
+        .bio-line i {
+            flex: 0 0 22px;
+            margin-top: 7px;
+            color: #e4e8ed;
+            font-size: 18px;
+            text-shadow: 1px 2px 1px #000;
+        }
+
+        .bio-line span { min-width: 0; overflow-wrap: anywhere; }
+
+        .open-player-button {
+            display: inline-flex;
+            min-height: 42px;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 12px;
+            padding: 0 16px;
+            border: 1px solid var(--blue-dim);
+            border-radius: 24px;
+            color: var(--blue-bright);
+            background: rgba(13, 18, 27, 0.34);
             cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(5px);
+            transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
         }
-        .btn:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.4); }
-        .tg:hover { background: #0088cc !important; box-shadow: 0 0 20px rgba(0, 136, 204, 0.4); }
-        .ds:hover { background: #5865F2 !important; box-shadow: 0 0 20px rgba(88, 101, 242, 0.4); }
-        .don:hover { background: #ffdd2d !important; color: #000 !important; box-shadow: 0 0 20px rgba(255, 221, 45, 0.4); }
 
-        .system-info { background: rgba(255,255,255,0.03); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); text-align: left; }
-        .stat-label { font-size: 10px; color: #666; display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .bar-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; }
-        .bar-fill { height: 100%; background: #4caf50; border-radius: 2px; width: 0%; transition: width 1s; }
+        .open-player-button:hover,
+        .open-player-button:focus-visible {
+            color: #fff;
+            border-color: var(--blue-bright);
+            background: rgba(18, 27, 41, 0.68);
+            transform: translateY(-1px);
+            outline: none;
+        }
 
-        #visualizer { display: flex; justify-content: center; align-items: flex-end; gap: 3px; height: 35px; margin-top: 15px; }
-        .v-bar { width: 4px; background: #ff003c; border-radius: 2px; height: 3px; transition: height 0.08s ease; }
+        .open-player-button svg { width: 19px; height: 19px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
 
-        .player-bar { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; display: flex; align-items: center; justify-content: space-between; }
-        .p-btn { cursor: pointer; font-size: 20px; color: #ff003c; transition: 0.2s; }
-        .track-info { font-size: 9px; color: #444; text-transform: uppercase; letter-spacing: 1px; }
-        #ping-val { font-size: 9px; color: #4caf50; font-family: monospace; transition: color 0.4s; cursor: help; }
-        #ping-val.good { color: #4caf50; }
-        #ping-val.mid  { color: #ffdd2d; }
-        #ping-val.bad  { color: #ff003c; }
-        #ping-val.na   { color: #666; }
+        .open-player-button #open-player-label {
+            display: inline-block;
+            max-width: 130px;
+            opacity: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: max-width 380ms cubic-bezier(0.32, 0.72, 0, 1), opacity 220ms ease, margin-left 380ms cubic-bezier(0.32, 0.72, 0, 1);
+        }
+
+        .open-player-button.is-open { gap: 0; padding-right: 11px; padding-left: 11px; }
+        .open-player-button.is-open #open-player-label { max-width: 0; margin-left: -10px; opacity: 0; }
+
+        .socials {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(24px, 7vw, 42px);
+            margin-top: clamp(34px, 7vh, 67px);
+        }
+
+        .social-link {
+            display: inline-grid;
+            width: 48px;
+            height: 48px;
+            flex: 0 0 48px;
+            place-items: center;
+            border-radius: 50%;
+            color: var(--blue);
+            font-size: 40px;
+            text-decoration: none;
+            text-shadow: 0 2px 14px rgba(5, 9, 16, 0.78);
+            transition: color 160ms ease, transform 160ms ease, filter 160ms ease;
+        }
+
+        .social-link:hover,
+        .social-link:focus-visible {
+            color: var(--blue-bright);
+            filter: drop-shadow(0 0 8px rgba(142, 182, 246, 0.62));
+            transform: translateY(-3px);
+            outline: none;
+        }
+
+        .social-link.donate { font-size: 34px; }
+
+        .player-collapse {
+            display: grid;
+            width: min(100%, 430px);
+            grid-template-rows: 0fr;
+            margin-top: 0;
+            opacity: 0;
+            transform: translateY(-12px) scale(0.94);
+            transform-origin: 50% 0;
+            pointer-events: none;
+            transition: grid-template-rows 520ms cubic-bezier(0.32, 0.72, 0, 1), opacity 300ms ease, transform 520ms cubic-bezier(0.32, 0.72, 0, 1), margin-top 520ms cubic-bezier(0.32, 0.72, 0, 1);
+        }
+
+        .player-collapse.open {
+            grid-template-rows: 1fr;
+            margin-top: 10px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .player-collapse > .player-clip {
+            min-height: 0;
+            border-radius: 22px;
+            box-shadow: 0 18px 46px rgba(0, 0, 0, 0.42);
+        }
+
+        .player-collapse > .player-clip { overflow: hidden; }
+
+        .player-sheet {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 15px 15px 13px;
+            border: 1px solid rgba(255, 255, 255, 0.11);
+            border-radius: 22px;
+            background: rgba(22, 22, 24, 0.82);
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(26px) saturate(180%);
+        }
+
+        .player-close {
+            position: absolute;
+            top: 9px;
+            right: 9px;
+            z-index: 2;
+            display: grid;
+            width: 26px;
+            height: 26px;
+            flex: 0 0 26px;
+            place-items: center;
+            border: 0;
+            border-radius: 50%;
+            color: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.12);
+            cursor: pointer;
+            transition: background-color 160ms ease;
+        }
+
+        .player-close svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2.4; }
+        .player-close:hover { background: rgba(255, 255, 255, 0.24); }
+
+        .track-copy { min-width: 0; padding-right: 26px; }
+
+        .player-track {
+            display: grid;
+            grid-template-columns: 64px minmax(0, 1fr);
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+        }
+
+        .album-cover {
+            display: block;
+            width: 64px;
+            height: 64px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.06);
+        }
+
+        .track-title { margin: 0; color: #fff; font-size: 17px; font-weight: 600; line-height: 1.2; }
+        .track-artist { margin: 2px 0 0; color: rgba(255, 255, 255, 0.55); font-size: 13px; }
+
+        .player-eq { display: inline-flex; height: 9px; align-items: flex-end; justify-content: center; gap: 2px; margin-left: 5px; opacity: 0; transition: opacity 220ms ease; vertical-align: -1px; }
+        .player-eq span { width: 2px; height: 3px; border-radius: 1px; background: var(--blue-bright); }
+        .player-collapse.is-playing .player-eq { opacity: 1; }
+        .player-collapse.is-playing .player-eq span { animation: equalize 700ms ease-in-out infinite alternate; }
+        .player-collapse.is-playing .player-eq span:nth-child(2n) { animation-delay: 180ms; }
+        .player-collapse.is-playing .player-eq span:nth-child(3n) { animation-delay: 320ms; }
+
+        .seek-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) 34px; align-items: center; gap: 8px; color: rgba(255, 255, 255, 0.5); font-size: 11px; font-variant-numeric: tabular-nums; }
+        .seek-row span:last-child { text-align: right; }
+
+        .transport-controls { display: flex; align-items: center; justify-content: center; gap: 30px; margin: 0; }
+
+        .transport-button {
+            display: grid;
+            width: 34px;
+            height: 34px;
+            place-items: center;
+            border: 0;
+            border-radius: 50%;
+            color: rgba(255, 255, 255, 0.9);
+            background: transparent;
+            cursor: pointer;
+            transition: transform 140ms ease, color 140ms ease, background-color 140ms ease;
+        }
+
+        .transport-button:hover { background: rgba(255, 255, 255, 0.1); }
+        .transport-button:active { transform: scale(0.9); }
+        .transport-button i { font-size: 16px; }
+        .transport-button.primary { width: 48px; height: 48px; color: #111; background: rgba(255, 255, 255, 0.94); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35); }
+        .transport-button.primary i { font-size: 19px; }
+        .transport-button.primary:hover { background: #fff; }
+
+        .volume-row { display: grid; grid-template-columns: 18px minmax(0, 1fr) 18px; align-items: center; gap: 9px; color: rgba(255, 255, 255, 0.45); }
+        .volume-row i { text-align: center; font-size: 12px; }
+
+        input[type="range"] {
+            width: 100%;
+            height: 18px;
+            margin: 0;
+            background: transparent;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 4px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.95) 0 var(--fill, 0%), rgba(255, 255, 255, 0.22) var(--fill, 0%) 100%);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            width: 13px;
+            height: 13px;
+            margin-top: -4.5px;
+            border: 0;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-moz-range-track { height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.22); }
+        input[type="range"]::-moz-range-progress { height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.95); }
+        input[type="range"]::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: #fff; }
+
+        @keyframes equalize { from { height: 2px; } to { height: 9px; } }
+
+        @keyframes forest-drift {
+            from { transform: scale(1.025) translate3d(0, 0, 0); }
+            to { transform: scale(1.075) translate3d(-0.4%, 0.3%, 0); }
+        }
+
+        @keyframes profile-arrive {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 540px) {
+            body { padding: 48px 16px 20px; }
+            .profile { width: min(100%, 420px); }
+            .avatar-frame { width: 142px; height: 142px; flex-basis: 142px; margin-bottom: 17px; }
+            .profile-name { font-size: 34px; }
+            .username { font-size: 19px; }
+            .skill-icons { gap: 15px; margin-top: 12px; }
+            .skill-icons span { font-size: 20px; }
+            .tags { gap: 8px; margin-top: 11px; }
+            .tag { min-height: 40px; padding: 0 14px; font-size: 16px; }
+            .divider { margin: 20px 0 17px; }
+            .bio-line { gap: 7px; font-size: 18px; }
+            .bio-line i { flex-basis: 20px; font-size: 16px; }
+            .socials { gap: clamp(17px, 6vw, 28px); margin-top: 31px; }
+            .social-link { width: 42px; height: 42px; flex-basis: 42px; font-size: 34px; }
+            .social-link.donate { font-size: 29px; }
+            .open-player-button { min-height: 40px; margin-top: 10px; font-size: 14px; }
+            .player-collapse { width: 100%; }
+            .player-collapse.open { margin-top: 11px; }
+            .player-sheet { gap: 12px; padding: 14px 13px 12px; border-radius: 20px; }
+            .player-collapse > .player-clip { border-radius: 20px; }
+            .player-collapse.open { margin-top: 9px; }
+            .player-track { grid-template-columns: 58px minmax(0, 1fr); gap: 11px; }
+            .album-cover { width: 58px; height: 58px; border-radius: 9px; }
+            .track-title { font-size: 16px; }
+            .track-artist { font-size: 12px; }
+            .track-copy { padding-right: 22px; }
+            .transport-controls { gap: 26px; }
+            .transport-button.primary { width: 46px; height: 46px; }
+            .volume-row { gap: 8px; }
+        }
+
+        @media (max-height: 760px) and (min-width: 541px) {
+            body { padding-top: 45px; padding-bottom: 20px; }
+            .avatar-frame { width: 132px; height: 132px; flex-basis: 132px; margin-bottom: 13px; }
+            .profile-name { font-size: 34px; }
+            .skill-icons { margin-top: 8px; }
+            .tags { margin-top: 8px; }
+            .tag { min-height: 39px; font-size: 17px; }
+            .divider { margin: 17px 0 14px; }
+            .bio-line { font-size: 18px; }
+            .socials { margin-top: 28px; }
+        }
+
+
+        /* ——— интро: снежинки → вспышка → ring-iris → мягкий кроссфейд ———
+           всё на transform/opacity: ни filter, ни clip-path, ни mask ——— */
+        .intro {
+            position: fixed;
+            z-index: 40;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, #16202e, #04070c 70%);
+            pointer-events: auto;
+            cursor: pointer;
+            will-change: opacity;
+            transition: opacity 560ms cubic-bezier(0.4, 0, 0.3, 1);
+            animation: introAutoHide 1ms linear 3600ms forwards;
+        }
+
+        .intro.is-managed { animation: none; }
+        .intro.is-fading.is-managed { animation: none; }
+
+        html.intro-lock, html.intro-lock body { overflow: hidden; }
+
+        .intro-flakes { position: absolute; inset: 0; }
+
+        .intro-flake {
+            position: absolute;
+            contain: layout style;
+            left: 50%;
+            top: 50%;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #d7e6ff;
+            box-shadow: 0 0 8px rgba(180, 210, 255, 0.85);
+            opacity: 0;
+            transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y)));
+            will-change: transform, opacity;
+            animation: introFlake 900ms cubic-bezier(0.45, 0, 0.2, 1) var(--d, 0ms) both;
+        }
+
+        .intro-core,
+        .intro-bloom,
+        .intro-ring {
+            contain: strict;
+        }
+
+        .intro-core {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            margin: -5px 0 0 -5px;
+            border-radius: 50%;
+            background: #fff;
+            opacity: 0;
+            will-change: transform, opacity;
+            animation: introCore 760ms cubic-bezier(0.3, 0, 0.3, 1) 760ms both;
+        }
+
+        .intro-bloom {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 180px;
+            height: 180px;
+            margin: -90px 0 0 -90px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(226, 238, 255, 0.95), rgba(160, 195, 245, 0.35) 38%, rgba(120, 160, 220, 0) 72%);
+            opacity: 0;
+            transform: scale(0.35);
+            will-change: transform, opacity;
+            animation: introBloom 900ms cubic-bezier(0.2, 0.6, 0.3, 1) 1180ms both;
+        }
+
+        .intro-ring {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 46px;
+            height: 46px;
+            margin: -23px 0 0 -23px;
+            border: 2px solid var(--blue-bright);
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0.25);
+            will-change: transform, opacity;
+            animation: introRing 1000ms cubic-bezier(0.34, 0, 0.24, 1) 1400ms both;
+        }
+
+        @keyframes introAutoHide { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+
+        .intro.is-fading { opacity: 0; }
+        .intro.is-done { display: none; }
+
+        @keyframes introFlake {
+            0% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.5); }
+            22% { opacity: 1; }
+            100% { opacity: 0.95; transform: translate(-50%, -50%) scale(0.2); }
+        }
+
+        @keyframes introCore {
+            0% { opacity: 0; transform: scale(0.35); }
+            35% { opacity: 1; transform: scale(1.8); }
+            100% { opacity: 0; transform: scale(6); }
+        }
+
+        @keyframes introBloom {
+            0% { opacity: 0; transform: scale(0.35); }
+            25% { opacity: 0.85; }
+            100% { opacity: 0; transform: scale(9); }
+        }
+
+        @keyframes introRing {
+            0% { opacity: 0; transform: scale(0.25); }
+            18% { opacity: 0.9; }
+            100% { opacity: 0; transform: scale(28); }
+        }
+
+        /* ——— каскад появления: только transform/opacity, чтобы не лагало ——— */
+        html.intro-lock .avatar-frame,
+        html.intro-lock .profile-name,
+        html.intro-lock .username,
+        html.intro-lock .skill-icons,
+        html.intro-lock .tags,
+        html.intro-lock .divider,
+        html.intro-lock .bio-line,
+        html.intro-lock .open-player-button,
+        html.intro-lock .social-link,
+        html.intro-lock .ping-pill {
+            opacity: 0;
+        }
+
+        html.is-formed .avatar-frame,
+        html.is-formed .profile-name,
+        html.is-formed .username,
+        html.is-formed .skill-icons,
+        html.is-formed .tags,
+        html.is-formed .divider,
+        html.is-formed .bio-line,
+        html.is-formed .open-player-button,
+        html.is-formed .social-link,
+        html.is-formed .ping-pill {
+            animation: rise-in 780ms cubic-bezier(0.16, 0.84, 0.24, 1) both;
+            will-change: transform, opacity;
+        }
+
+        html.is-formed .avatar-frame { animation-name: avatar-in; animation-duration: 980ms; animation-delay: 40ms; }
+        html.is-formed .profile-name { animation-delay: 150ms; }
+        html.is-formed .username { animation-delay: 230ms; }
+        html.is-formed .skill-icons { animation-delay: 300ms; }
+        html.is-formed .tags { animation-delay: 370ms; }
+        html.is-formed .divider { animation-delay: 440ms; animation-name: divider-in; }
+        html.is-formed .bio-line:nth-of-type(1) { animation-delay: 490ms; }
+        html.is-formed .bio-line:nth-of-type(2) { animation-delay: 550ms; }
+        html.is-formed .open-player-button { animation-delay: 610ms; }
+        html.is-formed .social-link:nth-child(1) { animation-delay: 680ms; }
+        html.is-formed .social-link:nth-child(2) { animation-delay: 730ms; }
+        html.is-formed .social-link:nth-child(3) { animation-delay: 780ms; }
+        html.is-formed .social-link:nth-child(4) { animation-delay: 830ms; }
+        html.is-formed .social-link:nth-child(5) { animation-delay: 880ms; }
+        html.is-formed .ping-pill { animation-delay: 930ms; animation-duration: 600ms; }
+
+        @keyframes rise-in {
+            from { opacity: 0; transform: translate3d(0, 16px, 0) scale(0.985); }
+            to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+        }
+
+        @keyframes avatar-in {
+            from { opacity: 0; transform: translate3d(0, 10px, 0) scale(0.88); }
+            55% { opacity: 1; }
+            to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+        }
+
+        @keyframes divider-in {
+            from { opacity: 0; transform: scaleX(0.3); }
+            to { opacity: 1; transform: scaleX(1); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .intro { display: none; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+        }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <video class="profile-vid" autoplay loop muted playsinline><source src="ebal.mp4" type="video/mp4"></video>
-    <h1 class="glitch">meeyota</h1>
-
-    <div class="links">
-        <a href="https://t.me/meeyota" target="_blank" class="btn tg" onclick="playClick()"><i class="fab fa-telegram"></i> TELEGRAM</a>
-        <a href="https://discord.com/users/meeyota" target="_blank" class="btn ds" onclick="playClick()"><i class="fab fa-discord"></i> DISCORD</a>
-        <div class="btn don" onclick="handleDonate()"><i class="fas fa-wallet"></i> DONATE</div>
+    <div class="intro" id="intro" role="presentation" aria-hidden="true">
+        <div class="intro-flakes" id="intro-flakes"></div>
+        <span class="intro-core"></span>
+        <span class="intro-bloom"></span>
+        <span class="intro-ring"></span>
     </div>
 
-    <div class="system-info">
-        <div class="stat-label"><span>DEVICE BATTERY</span><span id="bat-val">--%</span></div>
-        <div class="bar-bg"><div id="bat-fill" class="bar-fill"></div></div>
+    <canvas id="snow" aria-hidden="true"></canvas>
+
+    <div class="ping-pill" title="Задержка до сайта">
+        <i class="fas fa-signal" aria-hidden="true"></i>
+        <span id="ping-value">PING</span>
     </div>
 
-    <div id="visualizer"></div>
+    <main class="profile">
+        <div class="avatar-frame">
+            <video autoplay loop muted playsinline aria-label="Анимированная аватарка meeyota">
+                <source src="ebal.mp4" type="video/mp4">
+            </video>
+        </div>
 
-    <div class="player-bar">
-        <i class="fas fa-play p-btn" id="playBtn"></i>
-        <div class="track-info">Ice Cube - Good Day</div>
-        <div id="ping-val" class="na">PING: ...</div>
-    </div>
-</div>
+        <h1 class="profile-name">meeyota <span class="code-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"></path></svg></span></h1>
+        <p class="username">@meeyota</p>
 
-<audio id="audio" src="music.mp3" crossorigin="anonymous" loop></audio>
-<audio id="clickSound" src="click.mp3" preload="auto"></audio>
+        <div class="skill-icons" aria-label="Навыки и значки профиля">
+            <span title="Java"><i class="fab fa-java" aria-hidden="true"></i></span>
+            <span title="Verified"><i class="fas fa-circle-check" aria-hidden="true"></i></span>
+            <span title="Developer"><i class="fas fa-bug" aria-hidden="true"></i></span>
+            <span title="Code"><i class="fas fa-code" aria-hidden="true"></i></span>
+        </div>
 
-<script>
-    const audio = document.getElementById('audio');
-    const clickSound = document.getElementById('clickSound');
-    const playBtn = document.getElementById('playBtn');
-    const visualizer = document.getElementById('visualizer');
+        <div class="tags" aria-label="Роли">
+            <span class="tag tag-coder">Coder</span>
+            <span class="tag tag-owner">Owner</span>
+            <span class="tag tag-god">God</span>
+        </div>
 
-    // Звук клика
-    function playClick() {
-        clickSound.currentTime = 0;
-        clickSound.volume = 0.5; // Громкость 50%
-        clickSound.play();
-    }
+        <hr class="divider">
 
-    // Логика доната
-    function handleDonate() {
-        playClick();
-        const cardNumber = '2200701791728030';
-        navigator.clipboard.writeText(cardNumber).then(() => {
-            alert('Номер карты скопирован: ' + cardNumber);
-            window.open("https://www.tbank.ru/rm/meeyota.abyss/transfer/", "_blank");
-        });
-    }
+        <section class="bio-list" aria-label="Обо мне">
+            <div class="bio-line"><i class="fas fa-caret-right" aria-hidden="true"></i><span>Кодер на Java, C++ и C#</span></div>
+            <div class="bio-line"><i class="fas fa-caret-right" aria-hidden="true"></i><span>Просто босс</span></div>
+        </section>
 
-    // Эквалайзер
-    for(let i=0; i<18; i++) {
-        let bar = document.createElement('div');
-        bar.className = 'v-bar';
-        visualizer.appendChild(bar);
-    }
-    const bars = document.querySelectorAll('.v-bar');
-    let audioCtx, analyser, dataArray;
+        <button class="open-player-button" id="open-player" type="button" aria-expanded="false" aria-controls="player-collapse">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+            <span id="open-player-label">Открыть плеер</span>
+        </button>
 
-    function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-            const source = audioCtx.createMediaElementSource(audio);
-            source.connect(analyser); analyser.connect(audioCtx.destination);
-            analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount);
-            renderFrame();
+        <section class="player-collapse" id="player-collapse" aria-hidden="true">
+            <div class="player-clip">
+                <section class="player-sheet">
+                    <button class="player-close" id="close-player" type="button" aria-label="Закрыть" title="Закрыть">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18"></path></svg>
+                    </button>
+
+                    <div class="player-track">
+                        <img class="album-cover" src="assets/music/good-day-cover.jpg" alt="Обложка It Was a Good Day">
+                        <div class="track-copy">
+                            <h2 class="track-title" id="track-title">It Was a Good Day</h2>
+                            <p class="track-artist">Ice Cube <span class="player-eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span></p>
+                        </div>
+                    </div>
+
+                    <div class="seek-row">
+                        <span id="current-time">0:00</span>
+                        <input id="seek-bar" type="range" min="0" max="100" step="0.1" value="0" aria-label="Позиция воспроизведения">
+                        <span id="duration">3:56</span>
+                    </div>
+
+                    <div class="transport-controls">
+                        <button class="transport-button" id="back-10" type="button" aria-label="Назад на 10 секунд" title="Назад на 10 секунд"><i class="fas fa-rotate-left" aria-hidden="true"></i></button>
+                        <button class="transport-button primary" id="toggle-play" type="button" aria-label="Воспроизвести" title="Воспроизвести"><i class="fas fa-play" aria-hidden="true"></i></button>
+                        <button class="transport-button" id="forward-10" type="button" aria-label="Вперёд на 10 секунд" title="Вперёд на 10 секунд"><i class="fas fa-rotate-right" aria-hidden="true"></i></button>
+                    </div>
+
+                    <div class="volume-row">
+                        <i class="fas fa-volume-low" aria-hidden="true"></i>
+                        <input id="volume-bar" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Громкость">
+                        <i class="fas fa-volume-high" aria-hidden="true"></i>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <nav class="socials" aria-label="Социальные сети и поддержка">
+            <a class="social-link" href="https://www.tiktok.com/@meeyota" target="_blank" rel="noopener noreferrer" aria-label="TikTok @meeyota" title="TikTok @meeyota"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
+            <a class="social-link" href="https://github.com/ilya4575" target="_blank" rel="noopener noreferrer" aria-label="GitHub ilya4575" title="GitHub ilya4575"><i class="fab fa-github" aria-hidden="true"></i></a>
+            <a class="social-link" href="https://t.me/meeyota" target="_blank" rel="noopener noreferrer" aria-label="Telegram meeyota" title="Telegram meeyota"><i class="fab fa-telegram" aria-hidden="true"></i></a>
+            <a class="social-link" href="https://discord.com/users/meeyota" target="_blank" rel="noopener noreferrer" aria-label="Discord meeyota" title="Discord meeyota"><i class="fab fa-discord" aria-hidden="true"></i></a>
+            <a class="social-link donate" href="https://www.tbank.ru/rm/meeyota.abyss/transfer/" target="_blank" rel="noopener noreferrer" aria-label="Поддержать meeyota" title="Donate"><i class="fas fa-heart" aria-hidden="true"></i></a>
+        </nav>
+    </main>
+
+    <audio id="music" src="music.mp3" loop preload="metadata"></audio>
+    <audio id="click-sound" src="click.mp3" preload="auto"></audio>
+
+    <script>
+
+        let snowPaused = false;
+
+        /* ——— интро: снежинки слетаются → вспышка → iris ——— */
+        const introEl = document.getElementById('intro');
+        const introFlakes = document.getElementById('intro-flakes');
+        const profileEl = document.querySelector('.profile');
+        const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        let introTimers = [];
+        let introFinished = !introEl;
+
+        function introDelay(fn, ms) {
+            introTimers.push(setTimeout(fn, ms));
         }
-    }
 
-    function renderFrame() {
-        requestAnimationFrame(renderFrame);
-        analyser.getByteFrequencyData(dataArray);
-        bars.forEach((bar, i) => {
-            let h = (dataArray[i] / 255) * 35;
-            bar.style.height = (h > 3 ? h : 3) + "px";
-        });
-    }
-
-    playBtn.onclick = () => {
-        playClick(); // Звук на кнопку плеера
-        initAudio();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        if(audio.paused) { audio.play(); playBtn.className = "fas fa-pause p-btn"; }
-        else { audio.pause(); playBtn.className = "fas fa-play p-btn"; }
-    };
-
-    // Батарея
-    if ('getBattery' in navigator) {
-        navigator.getBattery().then(bat => {
-            const update = () => {
-                let l = Math.round(bat.level * 100);
-                document.getElementById('bat-val').innerText = l + "%";
-                document.getElementById('bat-fill').style.width = l + "%";
-            };
-            update(); bat.onlevelchange = update;
-        });
-    }
-
-    /* ============================================================
-       PING — РЕАЛЬНЫЙ замер сетевой задержки (RTT)
-       Браузер не умеет ICMP-ping, поэтому меряем честный round-trip:
-       запрос к крошечному файлу ping.txt на этом же домене,
-       время = performance.now() до/после полного ответа.
-       Берём МИНИМУМ из нескольких проб — это чистая сетевая
-       задержка, без очередей, джиттера и обработки на сервере.
-       ============================================================ */
-    const pingEl = document.getElementById('ping-val');
-    const PING_URL   = 'ping.txt';   // 1 байт, лежит рядом с index.html
-    const PING_PROBES = 4;           // проб за один замер
-    const PING_EVERY  = 5000;        // обновление, мс
-    const PING_TIMEOUT = 4000;       // отвал пробы, мс
-
-    function showPing(ms) {
-        if (ms === null) {
-            pingEl.innerText = 'PING: n/a';
-            pingEl.className = 'na';
-            return;
+        function buildIntroFlakes() {
+            if (!introFlakes || introFlakes.dataset.built) return;
+            introFlakes.dataset.built = '1';
+            const total = 26;
+            for (let i = 0; i < total; i++) {
+                const flake = document.createElement('span');
+                const angle = (Math.PI * 2 * i) / total + Math.random() * 0.32;
+                const radius = 90 + Math.random() * 90;
+                flake.className = 'intro-flake';
+                flake.style.setProperty('--x', Math.round(Math.cos(angle) * radius) + 'px');
+                flake.style.setProperty('--y', Math.round(Math.sin(angle) * radius) + 'px');
+                flake.style.setProperty('--d', Math.round(Math.random() * 260) + 'ms');
+                introFlakes.appendChild(flake);
+            }
         }
-        pingEl.innerText = 'PING: ' + Math.round(ms) + 'ms';
-        pingEl.className = ms < 80 ? 'good' : (ms < 200 ? 'mid' : 'bad');
-    }
 
-    async function probe(url, method) {
-        const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), PING_TIMEOUT);
-        const t0 = performance.now();
-        try {
-            const res = await fetch(url, {
-                method: method || 'GET',
-                cache: 'no-store',
-                signal: ctrl.signal,
-                credentials: 'omit'
+        function revealPage() {
+            const root = document.documentElement;
+            if (!root.classList.contains('is-formed')) {
+                root.classList.add('is-formed');
+                root.classList.remove('intro-lock');
+            }
+            snowPaused = false;
+        }
+
+        function finishIntro() {
+            if (!introEl || introFinished) return;
+            introFinished = true;
+            introTimers.forEach(clearTimeout);
+            introTimers = [];
+
+            revealPage();
+            introEl.classList.add('is-fading');
+            introEl.setAttribute('aria-hidden', 'true');
+            introDelay(() => introEl.classList.add('is-done'), 320);
+        }
+
+        function runIntro() {
+            if (!introEl) return;
+
+            if (reduceMotionQuery.matches) {
+                revealPage();
+                finishIntro();
+                return;
+            }
+
+            introEl.classList.add('is-managed');
+            document.documentElement.classList.add('intro-lock');
+            snowPaused = true;
+            buildIntroFlakes();
+
+            // элементы собираются, пока интро ещё полностью закрывает экран
+            introDelay(revealPage, 1500);
+            introDelay(() => introEl.classList.add('is-fading'), 1700);
+            introDelay(() => introEl.classList.add('is-done'), 2320);
+
+            // подстраховка, если вкладка была в фоне
+            introDelay(finishIntro, 5200);
+        }
+
+        if (introEl) {
+            introEl.addEventListener('click', finishIntro, { once: true });
+            runIntro();
+        } else {
+            revealPage();
+        }
+
+        const music = document.getElementById('music');
+        const clickSound = document.getElementById('click-sound');
+        const playerCollapse = document.getElementById('player-collapse');
+        const openPlayerButton = document.getElementById('open-player');
+        const openPlayerLabel = document.getElementById('open-player-label');
+        const togglePlayButton = document.getElementById('toggle-play');
+        const backTenButton = document.getElementById('back-10');
+        const forwardTenButton = document.getElementById('forward-10');
+        const seekBar = document.getElementById('seek-bar');
+        const volumeBar = document.getElementById('volume-bar');
+        const currentTimeLabel = document.getElementById('current-time');
+        const durationLabel = document.getElementById('duration');
+
+        function playClick() {
+            clickSound.currentTime = 0;
+            clickSound.volume = 0.35;
+            clickSound.play().catch(() => {});
+        }
+
+        function formatTime(seconds) {
+            if (!Number.isFinite(seconds)) return '0:00';
+            const whole = Math.floor(seconds);
+            const minutes = Math.floor(whole / 60);
+            const rest = whole % 60;
+            return `${minutes}:${String(rest).padStart(2, '0')}`;
+        }
+
+        function setFill(input) {
+            const max = Number(input.max) || 1;
+            const percent = Math.min(100, Math.max(0, (Number(input.value) / max) * 100));
+            input.style.setProperty('--fill', percent + '%');
+        }
+
+        function setPlayerOpen(open) {
+            playerCollapse.classList.toggle('open', open);
+            playerCollapse.setAttribute('aria-hidden', String(!open));
+            openPlayerButton.setAttribute('aria-expanded', String(open));
+            openPlayerButton.classList.toggle('is-open', open);
+            openPlayerButton.setAttribute('aria-label', open ? 'Скрыть плеер' : 'Открыть плеер');
+            if (!open) openPlayerLabel.textContent = 'Открыть плеер';
+            if (open) {
+                playerCollapse.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                setTimeout(() => setFill(seekBar), 320);
+            }
+        }
+
+        function syncPlayState() {
+            const icon = togglePlayButton.querySelector('i');
+            if (music.paused) {
+                icon.className = 'fas fa-play';
+                togglePlayButton.setAttribute('aria-label', 'Воспроизвести');
+                togglePlayButton.title = 'Воспроизвести';
+                playerCollapse.classList.remove('is-playing');
+            } else {
+                icon.className = 'fas fa-pause';
+                togglePlayButton.setAttribute('aria-label', 'Пауза');
+                togglePlayButton.title = 'Пауза';
+                playerCollapse.classList.add('is-playing');
+            }
+        }
+
+        openPlayerButton.addEventListener('click', () => {
+            playClick();
+            setPlayerOpen(!playerCollapse.classList.contains('open'));
+        });
+
+        document.getElementById('close-player').addEventListener('click', () => {
+            playClick();
+            setPlayerOpen(false);
+            openPlayerButton.focus();
+        });
+
+        music.volume = Number(volumeBar.value);
+        setFill(volumeBar);
+        setFill(seekBar);
+
+        togglePlayButton.addEventListener('click', async () => {
+            playClick();
+            try {
+                if (music.paused) await music.play();
+                else music.pause();
+            } catch (error) {
+                syncPlayState();
+            }
+        });
+
+        backTenButton.addEventListener('click', () => {
+            playClick();
+            music.currentTime = Math.max(0, music.currentTime - 10);
+        });
+
+        forwardTenButton.addEventListener('click', () => {
+            playClick();
+            music.currentTime = Math.min(music.duration || 0, music.currentTime + 10);
+        });
+
+        seekBar.addEventListener('input', () => {
+            setFill(seekBar);
+            if (Number.isFinite(music.duration)) {
+                music.currentTime = (Number(seekBar.value) / 100) * music.duration;
+            }
+        });
+
+        volumeBar.addEventListener('input', () => {
+            music.volume = Number(volumeBar.value);
+        setFill(volumeBar);
+        setFill(seekBar);
+            music.muted = music.volume === 0;
+            setFill(volumeBar);
+        });
+
+        music.addEventListener('loadedmetadata', () => {
+            durationLabel.textContent = formatTime(music.duration);
+            if (music.duration) seekBar.max = '100';
+        });
+
+        music.addEventListener('timeupdate', () => {
+            currentTimeLabel.textContent = formatTime(music.currentTime);
+            if (music.duration && document.activeElement !== seekBar) {
+                seekBar.value = String((music.currentTime / music.duration) * 100);
+                setFill(seekBar);
+            }
+        });
+
+        music.addEventListener('play', syncPlayState);
+        music.addEventListener('pause', syncPlayState);
+        syncPlayState();
+
+        document.querySelectorAll('.social-link').forEach((link) => {
+            link.addEventListener('click', playClick);
+        });
+
+        async function updatePing() {
+            const ping = document.getElementById('ping-value');
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 3500);
+            const start = performance.now();
+            try {
+                const response = await fetch(`ping.txt?cb=${Date.now()}`, {
+                    cache: 'no-store',
+                    signal: controller.signal
+                });
+                await response.arrayBuffer();
+                ping.textContent = response.ok ? `${Math.round(performance.now() - start)}ms` : 'N/A';
+            } catch (error) {
+                ping.textContent = 'N/A';
+            } finally {
+                clearTimeout(timeout);
+            }
+        }
+
+        updatePing();
+        setInterval(updatePing, 8000);
+
+        const canvas = document.getElementById('snow');
+        const context = canvas.getContext('2d');
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        let flakes = [];
+        let width = 0;
+        let height = 0;
+        let lastFrame = 0;
+
+        function createFlakes() {
+            const density = Math.max(42, Math.min(105, Math.round((width * height) / 15000)));
+            flakes = Array.from({ length: density }, () => ({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: 0.7 + Math.random() * 2,
+                speed: 0.35 + Math.random() * 1.15,
+                drift: (Math.random() - 0.5) * 0.55,
+                phase: Math.random() * Math.PI * 2,
+                alpha: 0.42 + Math.random() * 0.48
+            }));
+        }
+
+        function resizeSnow() {
+            const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = Math.round(width * ratio);
+            canvas.height = Math.round(height * ratio);
+            canvas.style.width = `${width}px`;
+            canvas.style.height = `${height}px`;
+            context.setTransform(ratio, 0, 0, ratio, 0, 0);
+            createFlakes();
+        }
+
+        function drawSnow(timestamp = 0) {
+            if (reduceMotion.matches) return;
+            if (snowPaused) {
+                lastFrame = timestamp;
+                requestAnimationFrame(drawSnow);
+                return;
+            }
+            const step = lastFrame ? Math.min((timestamp - lastFrame) / 16.67, 2) : 1;
+            lastFrame = timestamp;
+            context.clearRect(0, 0, width, height);
+            context.fillStyle = '#f5f8ff';
+
+            flakes.forEach((flake) => {
+                flake.phase += 0.008 * step;
+                flake.x += (flake.drift + Math.sin(flake.phase) * 0.34) * step;
+                flake.y += flake.speed * step;
+                if (flake.y > height + 5) {
+                    flake.y = -5;
+                    flake.x = Math.random() * width;
+                }
+                if (flake.x < -5) flake.x = width + 5;
+                if (flake.x > width + 5) flake.x = -5;
+
+                context.globalAlpha = flake.alpha;
+                context.beginPath();
+                context.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+                context.fill();
             });
-            await res.arrayBuffer();          // ждём тело, чтобы замер был полным
-            const dt = performance.now() - t0;
-            if (!res.ok) return null;
-            if (dt <= 0 || dt > PING_TIMEOUT) return null;
-            return dt;
-        } catch (e) {
-            return null;
-        } finally {
-            clearTimeout(timer);
-        }
-    }
-
-    // один замер = несколько параллельных проб, берём лучшую
-    async function measurePing() {
-        const bust = () => '?cb=' + Date.now() + Math.random().toString(36).slice(2);
-        let results = await Promise.all(
-            Array.from({ length: PING_PROBES }, () => probe(PING_URL + bust()))
-        );
-
-        // если ping.txt ещё не залит — пробуем HEAD своего же index.html
-        if (!results.some(r => r !== null)) {
-            results = await Promise.all(
-                Array.from({ length: PING_PROBES }, () => probe(location.pathname + bust(), 'HEAD'))
-            );
+            context.globalAlpha = 1;
+            requestAnimationFrame(drawSnow);
         }
 
-        const ok = results.filter(r => r !== null);
-        if (ok.length) return Math.min.apply(null, ok);
-
-        // последний шанс: оценка RTT от самого браузера (Chrome/Android)
-        const netRtt = navigator.connection && navigator.connection.rtt;
-        if (typeof netRtt === 'number' && netRtt > 0) return netRtt;
-        return null;
-    }
-
-    let pingBusy = false;
-    async function updatePing() {
-        if (pingBusy) return;
-        pingBusy = true;
-        try {
-            showPing(await measurePing());
-        } finally {
-            pingBusy = false;
-        }
-    }
-
-    updatePing();
-    setInterval(updatePing, PING_EVERY);
-
-    // при возврате на вкладку — сразу свежий замер
-    document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) updatePing();
-    });
-</script>
-
+        resizeSnow();
+        if (!reduceMotion.matches) requestAnimationFrame(drawSnow);
+        window.addEventListener('resize', resizeSnow, { passive: true });
+        reduceMotion.addEventListener('change', () => {
+            lastFrame = 0;
+            if (!reduceMotion.matches) requestAnimationFrame(drawSnow);
+            else context.clearRect(0, 0, width, height);
+        });
+    </script>
 </body>
 </html>
